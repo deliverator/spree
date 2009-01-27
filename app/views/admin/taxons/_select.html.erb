@@ -1,0 +1,25 @@
+<% if (@root_taxon.parent_id == nil ) %> 
+<tr id="<%= dom_id(@taxonomy.id, :sel) %>">
+<td> <%= @root_taxon.name.singularize %> </td>
+<% end %>
+<% if (@root_taxon.children.count != 0) %>
+<td valign="top">
+	<%=  collection_select(:taxon, :id, @taxons, :id, :name, 
+		{:include_blank => true, :selected => nil},
+		{:onchange => remote_function(
+			{:update => "#{dom_id(@root_taxon.id, :sel)}" + "_browse",
+			:with => "'select=' + escape(value)" 
+		})}
+  )%> </td> 
+<div id="<%= dom_id(@root_taxon.id, :sel)%>_browse" >
+</div>
+<% else %>
+<%= link_to_remote t('Set'),
+	:url => set_admin_product_taxon_url(@product, @root_taxon),
+	:update => "taxons"
+%>
+	
+<% end %>
+<% if (@root_taxon.parent_id == nil ) %> 
+</tr>
+<% end %>

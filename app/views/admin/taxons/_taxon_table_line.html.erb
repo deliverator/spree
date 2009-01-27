@@ -1,0 +1,24 @@
+    <tr id="<%= dom_id(taxonomy, :sel)%>">
+				<% if @product.taxonomies.has_key?(taxonomy.id) %>
+        <td valign="top"> <%=  taxon_path @product.taxonomies[taxonomy.id] %> </td>
+        <td valign="top"> <%=  @product.taxonomies[taxonomy.id].name %> </td>
+  	    <td valign="top">
+		      <%= link_to_remote t('Remove'), 
+		                         :url => remove_admin_product_taxon_url(@product, @product.taxonomies[taxonomy.id]),
+		                         :loading => "Element.show(#{dom_id(taxonomy, :rem_spinner)})",
+		                        # :update => "#{dom_id(taxonomy, :sel)}",
+		                         :update => "taxons",
+		                         :complete => "Element.hide(#{dom_id(taxonomy, :rem_spinner)});" %>
+				<% else %>
+        <td valign="top"> <%=  taxonomy.name %> </td>
+        <td valign="top"> not set </td>
+  	    <td valign="top">
+		      <%= link_to_remote t('Select'), 
+		                         :url => select_admin_product_taxon_url(@product, taxonomy),
+		                         :loading => "Element.show(#{dom_id(taxonomy, :rem_spinner)})",
+		                         :update => "#{dom_id(taxonomy, :sel)}",
+		                         :complete => "Element.hide(#{dom_id(taxonomy, :rem_spinner)});" %>
+				<% end %>
+          <%= image_tag "spinner.gif", :style => "display:none", :id => "#{dom_id(taxonomy, :rem_spinner)}" %>		                         
+  	    </td>        
+      </tr>
