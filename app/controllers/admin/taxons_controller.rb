@@ -1,7 +1,7 @@
 class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
   resource_controller
-  before_filter :load_object, :only => [:selected, :available, :remove]
+  before_filter :load_object, :only => [:selected, :available, :remove, :new ]
   belongs_to :product
   
   create.wants.js {render :text => @taxon.to_json()}
@@ -119,18 +119,36 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons.delete(@taxon)
     @product.save
     @taxons = @product.taxons
-    render :layout => false
+		render :partial => "taxon_table"
   end  
   
   def select
+    @product = Product.find_by_param!(params[:product_id])
+		@taxonomy = Taxonomy.find_by_param!(params[:id])
+		params[:select] ? @root_taxon = Taxon.find_by_param!(params[:select]) : 
+		@root_taxon = Taxon.find(:all, :conditions => {:taxonomy_id => @taxonomy.id, :parent_id => nil})[0]
+		@taxons = Taxon.find(:all, :conditions => {:parent_id => @root_taxon.id})
+		render :partial => "select" 
+#    taxon = Taxon.find(params[:id])
+#    @product.taxons << taxon
+#    @product.save
+#    @taxons = @product.taxons
+#    render :layout => false
+  end
+
+	def set
     @product = Product.find_by_param!(params[:product_id])
     taxon = Taxon.find(params[:id])
     @product.taxons << taxon
     @product.save
     @taxons = @product.taxons
-    render :layout => false
-  end
-  
+		render :partial => "taxon_table"
+	end
+
+	def new
+		render :partial => 'new'
+	end
+
   private 
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
