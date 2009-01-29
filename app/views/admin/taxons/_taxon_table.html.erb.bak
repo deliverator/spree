@@ -1,0 +1,38 @@
+<div id="test" >
+</div>
+<table class="basic-table">
+  <thead>
+  	<tr>
+  		<th><%= t("Name") %></th>
+  		<th><%= t("Path") %></th>
+  		<th><%= t("Action") %></th>
+  	</tr>
+  </thead>
+  <tbody>
+    <% Taxonomy.find(:all).each do |taxonomy| %>
+      <tr id="<%= dom_id(taxonomy, :sel)%>">
+        <td valign="top"><%= taxonomy.name.singularize %></td>
+				<% if @product.taxonomies.has_key?(taxonomy.id) %>
+        <td valign="top"> <%=  @product.taxonomies[taxonomy.id].name %> </td>
+  	    <td valign="top">
+		      <%= link_to_remote t('Remove'), 
+		                         :url => remove_admin_product_taxon_url(@product, taxonomy),
+		                         :loading => "Element.show(#{dom_id(taxonomy, :rem_spinner)})",
+		                        # :update => "#{dom_id(taxonomy, :sel)}",
+		                         :update => "#{dom_id(taxonomy, :sel)}",
+		                         :complete => "Element.hide(#{dom_id(taxonomy, :rem_spinner)});" %>
+				<% else %>
+        <td valign="top"> not set </td>
+  	    <td valign="top">
+		      <%= link_to_remote t('Select'), 
+		                         :url => select_admin_product_taxon_url(@product, taxonomy),
+		                         :loading => "Element.show(#{dom_id(taxonomy, :rem_spinner)})",
+		                         :update => "#{dom_id(taxonomy, :sel)}",
+		                         :complete => "Element.hide(#{dom_id(taxonomy, :rem_spinner)});" %>
+				<% end %>
+          <%= image_tag "spinner.gif", :style => "display:none", :id => "#{dom_id(taxonomy, :rem_spinner)}" %>		                         
+  	    </td>        
+      </tr>
+    <% end %>
+  </tbody>
+</table>

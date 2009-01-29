@@ -41,6 +41,15 @@ class Product < ActiveRecord::Base
     return nil if variants?
     variants.first
   end
+
+	# returns a hash of taxonomies with name as the key and taxon node as value. 
+	def taxonomies
+		taxonomies = Hash.new
+		self.taxons.each do |taxon|
+			taxonomies[taxon.taxonomy.id] = taxon
+		end
+		return taxonomies
+	end
   
   # Pseduo Attribute.  Products don't really have inventory - variants do.  We want to make the variant stuff transparent
   # in the simple cases, however, so we pretend like we're setting the inventory of the product when in fact, we're really 
