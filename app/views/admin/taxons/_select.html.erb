@@ -4,13 +4,23 @@
 <% end %>
 <% if (@root_taxon.children.count != 0) %>
 <td valign="top">
+<td>
 	<%=  collection_select(:taxon, :id, @taxons, :id, :name, 
 		{:include_blank => true, :selected => nil},
 		{:onchange => remote_function(
 			{:update => "#{dom_id(@root_taxon.id, :sel)}" + "_browse",
 			:with => "'select=' + escape(value)" 
 		})}
-  )%> </td> 
+  )%>
+ </td> 
+<td>
+<% if (@root_taxon.selectable?) %>
+<%= link_to_remote t('Set'),
+	:url => set_admin_product_taxon_url(@product, @root_taxon),
+	:update => "taxons"
+%>
+<% end %>
+ </td> 
 <div id="<%= dom_id(@root_taxon.id, :sel)%>_browse" >
 </div>
 <% else %>
